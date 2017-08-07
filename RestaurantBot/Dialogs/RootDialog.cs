@@ -32,20 +32,9 @@ namespace RestaurantBot.Dialogs
                 await CreateRestaurantDailog(context, latestRootObject);
                 await CreateFiltersDailog(context, latestRootObject);
                 context.UserData.SetValue("rootObject", latestRootObject);
-                try
-                {
-
-                    RootObject k = context.UserData.GetValue<RootObject>("rootObject");
-                }
-                catch (KeyNotFoundException KeyNotFoundException)
-                {
-                    var a = "1";
-
-                }
+               // context.UserData.RemoveValue("rootObject");
             }
             context.Wait(MessageReceivedAsync);
-
-
         }
 
         private async Task CreateRestaurantDailog(IDialogContext context, RootObject rootObject)
