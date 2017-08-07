@@ -21,15 +21,31 @@ namespace RestaurantBot.Dialogs
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
-            RootObject rootObject = BingServiceUtils.getRootObject("https://www.bingapis.com/api/v7/Places/search?q=thai+restaurant+hyderabad");
-            // calculate something for us to return
-            int length = (activity.Text ?? string.Empty).Length;
+            RootObject rootObject = BingServiceUtils.getRootObject(context, activity.Text);
+            string queryUrl = DailogUtils.getQueryUrl(rootObject, activity.Text);
+            RootObject latestRootObject = BingServiceUtils.getRootObject(queryUrl);
+            if(latestRootObject == null)
+            {
+                await context.PostAsync("Please enter your city name");
+            }
+            else { 
+                await CreateRestaurantDailog(context, latestRootObject);
+                await CreateFiltersDailog(context, latestRootObject);
+                context.UserData.SetValue("rootObject", latestRootObject);
+                try
+                {
 
-            // return our reply to the user
-            //await context.PostAsync($"You sent {activity.Text} which was {length} characters");
-            await CreateRestaurantDailog(context, rootObject);
-            await CreateFiltersDailog(context, rootObject);
+                    RootObject k = context.UserData.GetValue<RootObject>("rootObject");
+                }
+                catch (KeyNotFoundException KeyNotFoundException)
+                {
+                    var a = "1";
+
+                }
+            }
             context.Wait(MessageReceivedAsync);
+
+
         }
 
         private async Task CreateRestaurantDailog(IDialogContext context, RootObject rootObject)
@@ -41,6 +57,7 @@ namespace RestaurantBot.Dialogs
             {
                 List<CardAction> cardActions = createRestaurantCardActions(value);
                 List<CardImage> cardImages = DailogUtils.createRestaurantImageActions(value);
+
 
                 var heroCard = new HeroCard()
                 {
@@ -59,19 +76,19 @@ namespace RestaurantBot.Dialogs
             List<CardAction> listCardActions = new List<CardAction>();
 
             CardAction menuCard = DailogUtils.createCardAction(value.menuUrl, AppInfo.OPEN_URL, AppInfo.MENU);
-            listCardActions.Add(menuCard);
+            if(menuCard !=null ) listCardActions.Add(menuCard);
 
             CardAction reviewsCard = DailogUtils.createCardAction(value.menuUrl, AppInfo.OPEN_URL, AppInfo.REVIEWS); //TODO
-            listCardActions.Add(reviewsCard);
+            if (reviewsCard != null) listCardActions.Add(reviewsCard);
 
-            CardAction timingsCard = DailogUtils.createCardAction(value.menuUrl, AppInfo.OPEN_URL, AppInfo.MENU); //TODO
-            listCardActions.Add(timingsCard);
+            CardAction timingsCard = DailogUtils.createCardAction(value.menuUrl, AppInfo.OPEN_URL, AppInfo.TIMINGS); //TODO
+            if (timingsCard != null) listCardActions.Add(timingsCard);
 
             CardAction bookTableCard = DailogUtils.createCardAction(value.reservationUrl, AppInfo.OPEN_URL, AppInfo.BOOK_TABLE);
-            listCardActions.Add(bookTableCard);
+            if (bookTableCard != null) listCardActions.Add(bookTableCard);
 
             CardAction locationCard = DailogUtils.createCardAction(DailogUtils.getGoogleMapsLink(value), AppInfo.OPEN_URL, AppInfo.LOCATION);
-            listCardActions.Add(locationCard);
+            if (locationCard != null) listCardActions.Add(locationCard);
 
             return listCardActions;
         }
@@ -83,9 +100,12 @@ namespace RestaurantBot.Dialogs
 
             foreach (Filter filter in rootObject.filters)
             {
+                string title = filter.name;
+                if (filter.isSelected)title =  "*" + title; 
+
                 var heroCard = new HeroCard()
                 {
-                    Title = filter.name,
+                    Title = title,
                     Buttons = DailogUtils.createFilterCardAction(filter)
                 };
 

@@ -20,7 +20,7 @@ namespace RestaurantBot.Utils
 
             foreach (FilterValue filterValue in filter.filterValues)
             {
-                CardAction menuCard = createCardAction(FILTER_STRING + filterValue.name, AppInfo.IMBACK, filterValue.name);
+                CardAction menuCard = createCardAction(FILTER_STRING + "  " + filter.name + " - " + filterValue.name, AppInfo.IMBACK, filterValue.name, filterValue.isSelected);
                 listCardActions.Add(menuCard);
             }
             return listCardActions;
@@ -41,9 +41,10 @@ namespace RestaurantBot.Utils
             if (value.geo == null) return null;
             return GOOGLEMAPS_URL + value.geo.latitude.ToString() + "," + value.geo.longitude.ToString();
         }
-        public static CardAction createCardAction(string value, string action, string title)
+        public static CardAction createCardAction(string value, string action, string title, bool isSelected = false)
         {
-            if (value == null || action == null || title == null) return null;
+            if (value == null || action == null || title == null || value == "") return null;
+            if (isSelected) title = "*" + title;
             CardAction cardButton = new CardAction()
             {
                 Value = value,
@@ -52,6 +53,55 @@ namespace RestaurantBot.Utils
             };
             return cardButton;
         }
+
+        public static string getQueryUrl(RootObject rootObject, string query)
+        {
+            string queryUrl = "";
+            var queryString = parseQuery(query);
+            string queryValue = getQueryValue(query);
+            foreach(Filter filter in rootObject.filters)
+            {
+                if (filter.name.Equals(queryString.ToString()) && queryUrl.Equals(""))
+                {
+                    foreach(FilterValue filterValue in filter.filterValues)
+                    {
+                        if (filterValue.name.Contains(queryValue))
+                        {
+                            queryUrl = filterValue.url;
+                            filterValue.isSelected = true;
+                            break;
+                        }
+                    }
+                }
+                continue;
+            }
+            if (queryUrl == "") queryUrl = BingServiceUtils.URL + query;
+            return queryUrl;
+        }
+
+        private static MessageType parseQuery(string query)
+        {
+            MessageType messageType = MessageType.Default;
+            if (query.Contains("Cuisine"))
+            {
+                messageType = MessageType.Cuisines;
+            }
+            else if (query.Contains("Rating"))
+            {
+                messageType = MessageType.Ratings;
+            }
+            else if (query.Contains("Price"))
+            {
+                messageType = MessageType.Prices;
+            }
+            return messageType;
+        }
+
+        private static string getQueryValue(string query)
+        {
+            var split = query.Split('-');
+            return split[split.Length - 1].TrimEnd().TrimStart();
+         }
 
     }
 }

@@ -112,6 +112,7 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Constants\AppInfo.cs" />
+    <Compile Include="Constants\MessageType.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Dialogs\RestaurantDialog.cs" />
     <Compile Include="Dialogs\RootDialog.cs" />
