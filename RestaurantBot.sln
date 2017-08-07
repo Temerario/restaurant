@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestaurantBot", "Bot Application1\RestaurantBot.csproj", "{558D157D-BB41-4005-86E8-FB52BB1F8366}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestaurantBot", "RestaurantBot\RestaurantBot.csproj", "{558D157D-BB41-4005-86E8-FB52BB1F8366}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

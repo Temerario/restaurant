@@ -38,3 +38,43 @@ c:\users\sridg\documents\visual studio 2015\Projects\Bot Application1\Bot Applic
 c:\users\sridg\documents\visual studio 2015\Projects\Bot Application1\Bot Application1\obj\Debug\RestaurantBot.csprojResolveAssemblyReference.cache
 c:\users\sridg\documents\visual studio 2015\Projects\Bot Application1\Bot Application1\obj\Debug\Bot Application.dll
 c:\users\sridg\documents\visual studio 2015\Projects\Bot Application1\Bot Application1\obj\Debug\Bot Application.pdb
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Bot Application.dll.config
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Bot Application.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Bot Application.pdb
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Autofac.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Chronic.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Microsoft.Bot.Builder.Autofac.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Microsoft.Bot.Builder.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Microsoft.Bot.Connector.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Microsoft.IdentityModel.Protocol.Extensions.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Microsoft.Rest.ClientRuntime.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Microsoft.WindowsAzure.Configuration.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Newtonsoft.Json.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\System.Net.Http.Formatting.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\System.Web.Http.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\System.Web.Http.WebHost.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Autofac.xml
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Microsoft.Bot.Builder.xml
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Microsoft.Bot.Builder.Autofac.xml
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Microsoft.Bot.Connector.xml
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Microsoft.IdentityModel.Protocol.Extensions.xml
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Microsoft.WindowsAzure.Configuration.xml
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\Newtonsoft.Json.xml
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\System.IdentityModel.Tokens.Jwt.xml
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\System.Net.Http.Formatting.xml
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\System.Web.Http.xml
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\System.Web.Http.WebHost.xml
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\ar\Microsoft.Bot.Builder.resources.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\cs\Microsoft.Bot.Builder.resources.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\de-dE\Microsoft.Bot.Builder.resources.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\en\Microsoft.Bot.Builder.resources.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\es\Microsoft.Bot.Builder.resources.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\fa\Microsoft.Bot.Builder.resources.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\fr\Microsoft.Bot.Builder.resources.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\ja\Microsoft.Bot.Builder.resources.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\ru\Microsoft.Bot.Builder.resources.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\bin\zh-hans\Microsoft.Bot.Builder.resources.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\obj\Debug\RestaurantBot.csprojResolveAssemblyReference.cache
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\obj\Debug\Bot Application.dll
+C:\Users\sridg\Documents\Visual Studio 2015\Projects\Restaurant\RestaurantBot\obj\Debug\Bot Application.pdb
