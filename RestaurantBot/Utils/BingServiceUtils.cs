@@ -11,26 +11,32 @@ using System.Runtime.Remoting.Contexts;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Web;
-
+using Microsoft.Practices.Unity;
+using Microsoft.Bot.Connector;
 
 namespace RestaurantBot.Utils
 {
     public static class BingServiceUtils
     {
         public static string URL =  "https://www.bingapis.com/api/v7/Places/search?q=";
-        public static RootObject getRootObject(IDialogContext context, string query)
+        public static Dictionary<string, string> getRootObject(IDialogContext context, Activity activity, string query)
         {
-            RootObject rootObject = null;
-            if (context.UserData.ContainsKey("rootObject"))
+            var azureStorageProvider = InjectionContainer.Instance.Container.Resolve<AzureStorageProvider>();
+
+           // var rootObject = null;
+
+            var rootObject = azureStorageProvider.GetConversationsData(activity.Conversation.Id, activity.ChannelId);
+            if(rootObject.Count<ConversationEntity>() != 0)
             {
-                rootObject = context.UserData.GetValue<RootObject>("rootObject");
+                ConversationEntity conversationEntity = rootObject.Last<ConversationEntity>();
+                return DeserializeToDict(conversationEntity.ConversationData);
             }
-            else if(query != null || query != "")
-            {
-                rootObject = getRootObject(URL + query);
-            }
+           // else if(query != null || query != "")
+           // {
+           //     return getRootObject(URL + query);
+          //  }
             
-            return rootObject;
+          return null;
         }
 
         public static RootObject getRootObject(String url)
@@ -46,7 +52,7 @@ namespace RestaurantBot.Utils
             }
             return Deserialize(result);
         }
-        private static RootObject Deserialize(string json)
+        public static RootObject Deserialize(string json)
         {
             RootObject rootObject = null;
             using (var ms = new MemoryStream(Encoding.Unicode.GetBytes(json)))
@@ -59,6 +65,29 @@ namespace RestaurantBot.Utils
             return rootObject;
         }
 
+        public static Dictionary<string, string> DeserializeToDict(string json)
+        {
+            Dictionary<string, string> bingUrlHash = null;
+            using (var ms = new MemoryStream(Encoding.Unicode.GetBytes(json)))
+            {
+                // Deserialization from JSON  
+                DataContractJsonSerializer deserializer = new DataContractJsonSerializer(typeof(Dictionary<string, string>));
+                bingUrlHash = (Dictionary<string, string>)deserializer.ReadObject(ms);
+
+            }
+            return bingUrlHash;
+        }
+
+        public static string Serialize(RootObject rootObject)
+        {
+            MemoryStream ms = new MemoryStream();
+
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(Dictionary<string, string>));
+            ser.WriteObject(ms, DbUtils.getBingUrlHash(rootObject));
+            byte[] json = ms.ToArray();
+            ms.Close();
+            return Encoding.UTF8.GetString(json, 0, json.Length);
+        }
         private static String AddQuery(string uri, string name, string value)
         {
             var ub = new UriBuilder(new Uri(uri));

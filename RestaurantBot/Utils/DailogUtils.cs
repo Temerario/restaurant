@@ -44,7 +44,7 @@ namespace RestaurantBot.Utils
         public static CardAction createCardAction(string value, string action, string title, bool isSelected = false)
         {
             if (value == null || action == null || title == null || value == "") return null;
-            if (isSelected) title = "*" + title;
+            if (isSelected) title = title + "*";
             CardAction cardButton = new CardAction()
             {
                 Value = value,
@@ -54,28 +54,19 @@ namespace RestaurantBot.Utils
             return cardButton;
         }
 
-        public static string getQueryUrl(RootObject rootObject, string query)
+        public static string getQueryUrl(Dictionary<string, string> bingUrlHash, string query)
         {
             string queryUrl = "";
             var queryString = parseQuery(query);
             string queryValue = getQueryValue(query);
-            foreach(Filter filter in rootObject.filters)
+            if (bingUrlHash != null && bingUrlHash.ContainsKey(queryValue))
             {
-                if (filter.name.Equals(queryString.ToString()) && queryUrl.Equals(""))
-                {
-                    foreach(FilterValue filterValue in filter.filterValues)
-                    {
-                        if (filterValue.name.Contains(queryValue))
-                        {
-                            queryUrl = filterValue.url;
-                            filterValue.isSelected = true;
-                            break;
-                        }
-                    }
-                }
-                continue;
+                bingUrlHash.TryGetValue(queryValue, out queryUrl);
             }
-            if (queryUrl == "") queryUrl = BingServiceUtils.URL + query;
+            else
+            {
+                queryUrl = BingServiceUtils.URL + query;
+            }
             return queryUrl;
         }
 
@@ -99,8 +90,8 @@ namespace RestaurantBot.Utils
 
         private static string getQueryValue(string query)
         {
-            var split = query.Split('-');
-            return split[split.Length - 1].TrimEnd().TrimStart();
+            var split = query.Split(' ');
+            return split[split.Length - 1].TrimEnd().TrimStart().ToLower();
          }
 
     }

@@ -11,6 +11,6 @@ namespace RestaurantBot.Models
         public bool isSelected { get; set; }
         public string id { get; set; }
         public List<FilterValue> filterValues { get; set; }
-        public ClearFilterValue clearFilterValue { get; set; }
+      //  public ClearFilterValue clearFilterValue { get; set; }
     }
 }
