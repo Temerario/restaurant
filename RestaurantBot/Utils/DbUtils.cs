@@ -1,4 +1,5 @@
-﻿using RestaurantBot.Models;
+﻿using RestaurantBot.Constants;
+using RestaurantBot.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,7 @@ namespace RestaurantBot.Utils
                     }
                 }
             }
+            bingUrlHash.Add(AppInfo.CURRENT_URL, rootObject.currentUrl);
             return bingUrlHash;
         }
 

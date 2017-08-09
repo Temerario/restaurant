@@ -25,8 +25,8 @@ namespace RestaurantBot.Models
      //   public Address address { get; set; }
      //   public string telephone { get; set; }
      //   public AggregateRating aggregateRating { get; set; }
-      //  public List<OpeningHoursSpecification> openingHoursSpecification { get; set; }
-      //  public List<Review> review { get; set; }
+        public List<OpeningHoursSpecification> openingHoursSpecification { get; set; }
+        public List<Review> review { get; set; }
         public List<Photo> photo { get; set; }
      //   public string timeZone { get; set; }
      //   public string priceRange { get; set; }

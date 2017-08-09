@@ -31,10 +31,6 @@ namespace RestaurantBot.Utils
                 ConversationEntity conversationEntity = rootObject.Last<ConversationEntity>();
                 return DeserializeToDict(conversationEntity.ConversationData);
             }
-           // else if(query != null || query != "")
-           // {
-           //     return getRootObject(URL + query);
-          //  }
             
           return null;
         }
@@ -50,9 +46,9 @@ namespace RestaurantBot.Utils
                 response.EnsureSuccessStatusCode();
                 result = response.Content.ReadAsStringAsync().Result;
             }
-            return Deserialize(result);
+            return Deserialize(result, url);
         }
-        public static RootObject Deserialize(string json)
+        public static RootObject Deserialize(string json, string url)
         {
             RootObject rootObject = null;
             using (var ms = new MemoryStream(Encoding.Unicode.GetBytes(json)))
@@ -62,6 +58,7 @@ namespace RestaurantBot.Utils
                 rootObject = (RootObject)deserializer.ReadObject(ms);
 
             }
+            rootObject.currentUrl = url;
             return rootObject;
         }
 

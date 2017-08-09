@@ -14,6 +14,8 @@ namespace RestaurantBot.Models
         public List<Filter> filters { get; set; }
        // public List<Sort> sort { get; set; }
         public List<Value> value { get; set; }
+
+        public string currentUrl { get; set; }
         //public SearchAction searchAction { get; set; }
     }
 }

@@ -13,6 +13,8 @@ namespace RestaurantBot.Constants
         Place,
         Restaurant,
         Filter,
+        Reviews,
+        Timings,
         Default
     }
 }

@@ -26,9 +26,14 @@ namespace RestaurantBot.Dialogs
             Dictionary<string, string> bingUrlHash = BingServiceUtils.getRootObject(context, activity, activity.Text);
             string queryUrl = DailogUtils.getQueryUrl(bingUrlHash, activity.Text);
             RootObject latestRootObject = BingServiceUtils.getRootObject(queryUrl);
-            if(latestRootObject == null)
+
+            if (DailogUtils.handleRestaurantEvents(activity.Text)) // handling reviews and timings
             {
-                await context.PostAsync("Sorry, we did find any restaurants matching your criteria. Try searching for 'cheap eats in location', 'best pizza in < location >, etc.");
+                await handleRestaurantEvents(context, latestRootObject, activity.Text);
+            }
+            else if(latestRootObject.totalEstimatedMatches == 0) // handling strings for which bing gave zero results
+            {
+                await context.PostAsync("Sorry, we didn't find any restaurants matching your criteria. Try searching for 'cheap eats in location', 'best pizza in < location >, etc.");
             }
             else { 
                 await CreateRestaurantDailog(context, latestRootObject);
@@ -43,6 +48,25 @@ namespace RestaurantBot.Dialogs
                 }
             }
             context.Wait(MessageReceivedAsync);
+        }
+
+        private async Task handleRestaurantEvents(IDialogContext context, RootObject latestRootObject, string inputText)
+        {
+            MessageType messageType = DailogUtils.parseQuery(inputText);
+            if(messageType == MessageType.Timings)
+            {
+                string text = DailogUtils.getReplyTimingText(latestRootObject, inputText);
+                await context.PostAsync(text);
+            }
+            else if(messageType ==MessageType.Reviews)
+            {
+                List<string> reviews = DailogUtils.getReplyReviewsText(latestRootObject, inputText);
+                foreach(string review in reviews)
+                {
+                    await context.PostAsync(review);
+                }
+            }
+           
         }
 
         private async Task CreateRestaurantDailog(IDialogContext context, RootObject rootObject)
@@ -75,10 +99,10 @@ namespace RestaurantBot.Dialogs
             CardAction menuCard = DailogUtils.createCardAction(value.menuUrl, AppInfo.OPEN_URL, AppInfo.MENU);
             if(menuCard !=null ) listCardActions.Add(menuCard);
 
-            CardAction reviewsCard = DailogUtils.createCardAction(value.menuUrl, AppInfo.OPEN_URL, AppInfo.REVIEWS); //TODO
+            CardAction reviewsCard = DailogUtils.createCardAction(DailogUtils.getReviewsImBackValue(value), AppInfo.IMBACK, AppInfo.REVIEWS); //TODO
             if (reviewsCard != null) listCardActions.Add(reviewsCard);
 
-            CardAction timingsCard = DailogUtils.createCardAction(value.menuUrl, AppInfo.OPEN_URL, AppInfo.TIMINGS); //TODO
+            CardAction timingsCard = DailogUtils.createCardAction(DailogUtils.getTimingsImBackValue(value), AppInfo.IMBACK, AppInfo.TIMINGS); //TODO
             if (timingsCard != null) listCardActions.Add(timingsCard);
 
             CardAction bookTableCard = DailogUtils.createCardAction(value.reservationUrl, AppInfo.OPEN_URL, AppInfo.BOOK_TABLE);

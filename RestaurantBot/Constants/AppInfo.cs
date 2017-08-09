@@ -16,6 +16,7 @@ namespace RestaurantBot.Constants
 
         public static string OPEN_URL = "openUrl";
         public static string IMBACK = "imBack";
+        public static string CURRENT_URL = "currentUrl";
 
     }
 }
