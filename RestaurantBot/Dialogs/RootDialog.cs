@@ -35,7 +35,7 @@ namespace RestaurantBot.Dialogs
             }
             else if(latestRootObject.totalEstimatedMatches == 0 || latestRootObject.searchAction == null || latestRootObject.searchAction.location == null) // handling strings for which bing gave zero results
             {
-                await context.PostAsync("Sorry, we didn't find any restaurants matching your criteria. Try searching for 'cheap eats in location', 'best pizza in < location >, etc.");
+                await context.PostAsync("Sorry, we didn't find any restaurants matching your criteria. Try searching for 'cheap eats in location', 'best pizza in location', etc.");
             }
             else {
                 await showDefaultDialogs(context, latestRootObject);

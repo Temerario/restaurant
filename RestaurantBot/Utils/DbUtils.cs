@@ -22,9 +22,9 @@ namespace RestaurantBot.Utils
                     foreach(FilterValue filterValue in filter.filterValues)
                     {
                         addItemsToHash(bingUrlHash, filterValue.name.ToLower(), filterValue.url);
-                        if(filterValue.scalarValue != null)
+                        if(filterValue.scalarValue != null && filterValue.scalarValue.minLevel != null)
                         {
-                            addItemsToHash(bingUrlHash, filterValue.scalarValue.minLevel, filterValue.url);
+                            addItemsToHash(bingUrlHash, filterValue.scalarValue.minLevel.ToLower(), filterValue.url);
                         }
                     }
                 }

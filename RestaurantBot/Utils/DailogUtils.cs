@@ -4,13 +4,19 @@ using RestaurantBot.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 
 namespace RestaurantBot.Utils
 {
     public class DailogUtils
     {
-        private static string FILTER_STRING = "Narrowing restaurants to";
+        private static string FILTER_STRING_1 = "Narrowing restaurants to {0} {1}";
+        private static string FILTER_STRING_2 = "Narrowing to {0} restaurants";
+
+        private static string REVERSE_FILTER_STRING_1 = "^Narrowing restaurants to (.*?) (.*?)$";
+        private static string REVERSE_FILTER_STRING_2 = "^Narrowing to (.*?) restaurants$";
+
         private static string GOOGLEMAPS_URL = "https://www.google.com/maps?saddr=My+Location&daddr=";
         private static string REVIEWS_VALUE = "Reviews of ";
         private static string TIMINGS_VALUE = "Timings of ";
@@ -28,7 +34,7 @@ namespace RestaurantBot.Utils
                     filterValueName = filterValue.scalarValue.minLevel;
                 }
 
-                CardAction menuCard = createCardAction(FILTER_STRING + " " + filter.name.ToLower() + " - " + filterValueName, AppInfo.IMBACK, filterValueName, filterValue.isSelected);
+                CardAction menuCard = createCardAction(getCardActionValueFormat(filter.name, filterValueName), AppInfo.IMBACK, filterValueName, filterValue.isSelected);
                 listCardActions.Add(menuCard);
             }
             return listCardActions;
@@ -70,9 +76,9 @@ namespace RestaurantBot.Utils
             {
                 bingUrlHash.TryGetValue(AppInfo.CURRENT_URL, out queryUrl);
             }
-            else if (bingUrlHash != null && bingUrlHash.ContainsKey(queryValue))
+            else if (bingUrlHash != null && bingUrlHash.ContainsKey(queryValue.ToLower()))
             {
-                bingUrlHash.TryGetValue(queryValue, out queryUrl);
+                bingUrlHash.TryGetValue(queryValue.ToLower(), out queryUrl);
             }
             else
             {
@@ -96,6 +102,16 @@ namespace RestaurantBot.Utils
         {
             MessageType messageType = parseQuery(text);
             if(messageType.Equals(MessageType.Timings)|| messageType.Equals(MessageType.Reviews))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool handleFilterActions(string text)
+        {
+            MessageType messageType = parseQuery(text);
+            if (messageType.Equals(MessageType.Cuisines) || messageType.Equals(MessageType.Ratings))
             {
                 return true;
             }
@@ -152,7 +168,7 @@ namespace RestaurantBot.Utils
                 reviewText = review.provider.Last<Provider>().name + "<br />";
                 reviewText += review.reviewRating.text + "/" + review.reviewRating.bestRating.ToString() + "<br />";
                 reviewText += review.comment.text;
-                reviewText += getHyperLink("read more", review.url);
+             //   reviewText += getHyperLink("read more", review.url);
                 reviews.Add(reviewText);
             }
             return reviews;
@@ -164,7 +180,7 @@ namespace RestaurantBot.Utils
             if (value.aggregateRating != null &&value.review != null && value.review.First<Review>() != null)
             {
                 cardSubtitle = value.aggregateRating.text +"/" + value.aggregateRating.bestRating.ToString()+ " on " ;
-                cardSubtitle += value.review.First<Review>().provider[0].name + "(" + value.aggregateRating.reviewCount.ToString() + ")";
+                cardSubtitle += value.review.First<Review>().provider[0].name + " (" + value.aggregateRating.reviewCount.ToString() + ")";
             }
 
             return cardSubtitle;
@@ -183,6 +199,18 @@ namespace RestaurantBot.Utils
             }
 
             return cardText;
+        }
+
+        private static string getCardActionValueFormat(string messageType, string value)
+        {
+            string cardActionText = "";
+            if (MessageType.Prices.ToString().Equals(messageType)) {
+                cardActionText = string.Format(FILTER_STRING_2, value);
+            }
+            else {
+                cardActionText = string.Format(FILTER_STRING_1, value, messageType.ToString());
+            }
+            return cardActionText;
         }
 
         private static string getHyperLink(string text, string link)
@@ -206,8 +234,17 @@ namespace RestaurantBot.Utils
         }
         private static string getQueryValue(string query)
         {
-            var split = query.Split(' ');
-            return split[split.Length - 1].TrimEnd().TrimStart().ToLower();
+            string value = "";
+            if (handleFilterActions(query))
+            {
+                value = query.Replace("Narrowing restaurants to ", "").Replace(MessageType.Cuisines.ToString(),"").Replace(MessageType.Ratings.ToString(), "");
+            }
+            else
+            {
+                //"Narrowing to {0} restaurants"
+                value = query.Replace("Narrowing to ", "").Replace(" restaurants", "");
+            }
+            return value.TrimStart().TrimEnd();
          }
         private static string getRemoveSubString(string sourceString, string removeString)
         {
