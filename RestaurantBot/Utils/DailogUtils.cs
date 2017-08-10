@@ -10,7 +10,7 @@ namespace RestaurantBot.Utils
 {
     public class DailogUtils
     {
-        private static string FILTER_STRING = "filter applied on ";
+        private static string FILTER_STRING = "Narrowing restaurants to";
         private static string GOOGLEMAPS_URL = "https://www.google.com/maps?saddr=My+Location&daddr=";
         private static string REVIEWS_VALUE = "Reviews of ";
         private static string TIMINGS_VALUE = "Timings of ";
@@ -22,7 +22,13 @@ namespace RestaurantBot.Utils
 
             foreach (FilterValue filterValue in filter.filterValues)
             {
-                CardAction menuCard = createCardAction(FILTER_STRING + "  " + filter.name + " - " + filterValue.name, AppInfo.IMBACK, filterValue.name, filterValue.isSelected);
+                string filterValueName = filterValue.name;
+                if (filter.name.Equals(MessageType.Prices.ToString()) && filterValue.scalarValue != null && filterValue.scalarValue.minLevel != null)
+                {
+                    filterValueName = filterValue.scalarValue.minLevel;
+                }
+
+                CardAction menuCard = createCardAction(FILTER_STRING + " " + filter.name.ToLower() + " - " + filterValueName, AppInfo.IMBACK, filterValueName, filterValue.isSelected);
                 listCardActions.Add(menuCard);
             }
             return listCardActions;
@@ -127,8 +133,9 @@ namespace RestaurantBot.Utils
             Value timingsValue = getRestaurantValue(rootObject, restaurantName);
             string outputString = "";
             foreach(OpeningHoursSpecification openDay in timingsValue.openingHoursSpecification) {
+                if (outputString != "") outputString += "<br />";
                 outputString += openDay.dayOfWeek + ": " + openDay.opens.hour.ToString("00") + ":" + openDay.opens.minute.ToString("00") +" - " +
-                    openDay.closes.hour.ToString("00") + ":" + openDay.closes.minute.ToString("00") + "<br />";
+                    openDay.closes.hour.ToString("00") + ":" + openDay.closes.minute.ToString("00");
             }
 
             return outputString;
@@ -139,15 +146,48 @@ namespace RestaurantBot.Utils
             string restaurantName = getRemoveSubString(inputText, REVIEWS_VALUE);
             Value reviewsValue = getRestaurantValue(rootObject, restaurantName);
             List<string> reviews = new List<string>();
-            foreach(Review review in reviewsValue.review)
+            foreach(Review review in reviewsValue.review.Take(3))
             {
                 string reviewText = "";
                 reviewText = review.provider.Last<Provider>().name + "<br />";
                 reviewText += review.reviewRating.text + "/" + review.reviewRating.bestRating.ToString() + "<br />";
                 reviewText += review.comment.text;
+                reviewText += getHyperLink("read more", review.url);
                 reviews.Add(reviewText);
             }
             return reviews;
+        }
+
+        public static string restaurantCardSubtitle(Value value)
+        {
+            string cardSubtitle = "";
+            if (value.aggregateRating != null &&value.review != null && value.review.First<Review>() != null)
+            {
+                cardSubtitle = value.aggregateRating.text +"/" + value.aggregateRating.bestRating.ToString()+ " on " ;
+                cardSubtitle += value.review.First<Review>().provider[0].name + "(" + value.aggregateRating.reviewCount.ToString() + ")";
+            }
+
+            return cardSubtitle;
+        }
+
+        public static string restaurantCardText(Value value)
+        {
+            string cardText = "";
+            if (value.servesCuisine != null)
+            {
+                cardText = value.servesCuisine.First<string>() + ", ";
+            }
+            if (value.priceRange != null)
+            {
+                cardText += value.priceRange.ToString();
+            }
+
+            return cardText;
+        }
+
+        private static string getHyperLink(string text, string link)
+        {
+            return "<a href='" + link + "'>"+text+"</a>";
         }
 
         private static Value getRestaurantValue(RootObject rootObject, string restaurantName)

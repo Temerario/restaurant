@@ -7,7 +7,7 @@ namespace RestaurantBot.Constants
 {
     public static class AppInfo
     {
-        public static string APP_ID = "D41D8CD98F00B204E9800998ECF8427E41BF2957";
+        public static string APP_ID = "3A1EEC8C87EBEBB8DA64546A4BEB869A382B5748";
         public static string MENU = "Menu";
         public static string REVIEWS = "Reviews";
         public static string TIMINGS = "Timings";

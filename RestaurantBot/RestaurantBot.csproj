@@ -222,6 +222,8 @@
     </Content>
     <None Include="Properties\PublishProfiles\RestaurantBotM2 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\RestaurantBotM2 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\restaurantBotProd - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\restaurantBotProd - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

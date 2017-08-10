@@ -16,6 +16,6 @@ namespace RestaurantBot.Models
         public List<Value> value { get; set; }
 
         public string currentUrl { get; set; }
-        //public SearchAction searchAction { get; set; }
+        public SearchAction searchAction { get; set; }
     }
 }
