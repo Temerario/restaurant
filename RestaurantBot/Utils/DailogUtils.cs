@@ -4,8 +4,10 @@ using RestaurantBot.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Xml.Linq;
 
 namespace RestaurantBot.Utils
 {
@@ -34,7 +36,7 @@ namespace RestaurantBot.Utils
                     filterValueName = filterValue.scalarValue.minLevel;
                 }
 
-                CardAction menuCard = createCardAction(getCardActionValueFormat(filter.name, filterValueName), AppInfo.IMBACK, filterValueName, filterValue.isSelected);
+                CardAction menuCard = createCardAction(getCardActionValueFormat(filter.name, filterValueName), AppInfo.IMBACK, filterValueName, filterValue.url, true, filterValue.isSelected);
                 listCardActions.Add(menuCard);
             }
             return listCardActions;
@@ -55,10 +57,11 @@ namespace RestaurantBot.Utils
             if (value.geo == null) return null;
             return GOOGLEMAPS_URL + value.geo.latitude.ToString() + "," + value.geo.longitude.ToString();
         }
-        public static CardAction createCardAction(string value, string action, string title, bool isSelected = false)
+        public static CardAction createCardAction(string value, string action, string title, string bingUrl, bool context = false, bool isSelected = false)
         {
             if (value == null || action == null || title == null || value == "") return null;
             if (isSelected) title = title + "*";
+            if (context) value += AddContextToValue(value, bingUrl);
             CardAction cardButton = new CardAction()
             {
                 Value = value,
@@ -68,19 +71,11 @@ namespace RestaurantBot.Utils
             return cardButton;
         }
 
-        public static string getQueryUrl(Dictionary<string, string> bingUrlHash, string query)
+        public static string getQueryUrl(string query)
         {
-            string queryUrl = "";
+            string queryUrl = FetchQueryUrl(query);
             string queryValue = getQueryValue(query);
-            if (handleRestaurantEvents(query)) // getting current url in case of reviews or timings
-            {
-                bingUrlHash.TryGetValue(AppInfo.CURRENT_URL, out queryUrl);
-            }
-            else if (bingUrlHash != null && bingUrlHash.ContainsKey(queryValue.ToLower()))
-            {
-                bingUrlHash.TryGetValue(queryValue.ToLower(), out queryUrl);
-            }
-            else
+            if(queryUrl == null)
             {
                 queryUrl = BingServiceUtils.URL + query;
             }
@@ -200,6 +195,53 @@ namespace RestaurantBot.Utils
 
             return cardText;
         }
+
+        public static string FetchQueryUrl(string originalMessage)
+        {
+            string context = null;
+            // Parse the message content xml and extract the context.
+            var content = XElement.Parse($"<root>{originalMessage.Replace("&", "&amp;").Replace("'", "&apos;")}</root>");
+
+            var contextNode = content.Element("context");
+            if (contextNode != null)
+            {
+                var feedbackIdAttribute = contextNode.Attribute("feedbackId");
+                if (feedbackIdAttribute != null)
+                {
+                    // Get context.
+                    context = GetContext(feedbackIdAttribute.Value);
+                }
+            }
+            return context;
+        }
+        public static string FetchQueryText(string originalMessage)
+        {
+            var content = XElement.Parse($"<root>{originalMessage.Replace("&", "&amp;").Replace("'", "&apos;")}</root>");
+            // Extract the textual portion of the message content, excluding the <context /> XML element.
+            StringBuilder messageBuilder = new StringBuilder();
+            foreach (XNode node in content.Nodes())
+            {
+                if (node is XText)
+                {
+                    messageBuilder.Append(node.ToString());
+                }
+            }
+            return messageBuilder.Replace("&amp;", "&").Replace("&apos;", "'").ToString();
+        }
+
+        private static readonly string ContextFormat = "{0}";
+
+        private static string GetContext(string feedbackId)
+        {
+            return String.Format(ContextFormat, feedbackId);
+        }
+
+
+        private static string AddContextToValue(string value, string bingUrl)
+        {
+            return String.Format("<context feedbackId=\"{0}\"></context>", bingUrl);
+        }
+
 
         private static string getCardActionValueFormat(string messageType, string value)
         {
