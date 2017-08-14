@@ -30,9 +30,13 @@ namespace RestaurantBot.Dialogs
             string currentBingUrl = DailogUtils.getQueryUrl(activity.Text);
             RootObject latestRootObject = BingServiceUtils.getRootObject(currentBingUrl);
             string queryText = DailogUtils.FetchQueryText(activity.Text);
-            if (latestRootObject.totalEstimatedMatches == 0 || latestRootObject.searchAction == null || latestRootObject.searchAction.location == null) // handling strings for which bing gave zero results
+            if (DailogUtils.handleWelcomeMessage(activity.Text))
             {
-                await context.PostAsync("Sorry, we didn't find any restaurants matching your criteria. Try searching for 'cheap eats in location', 'best pizza in location', etc.");
+                await context.PostAsync(AppInfo.WELCOME_MESSAGE.ToString());
+            }
+            else if (latestRootObject.totalEstimatedMatches == 0 || latestRootObject.searchAction == null || latestRootObject.searchAction.location == null) // handling strings for which bing gave zero results
+            {
+                await context.PostAsync("Sorry, we didn't find any restaurants matching your criteria. Try searching for \"cheap eats in Chandni Chowk\", \"best pizza in Mumbai\", etc.");
             }
             else if (DailogUtils.handleRestaurantEvents(queryText)) // handling reviews and timings
             {
@@ -73,6 +77,7 @@ namespace RestaurantBot.Dialogs
 
         private async Task CreateSummaryDailog(IDialogContext context, RootObject rootObject, string currentBingUrl)
         {
+            if (rootObject.filters == null || rootObject.filters.Count == 0) return;
             string replyText = "", cuisine = "", prices = "", rating = "";
             string location = " "+rootObject.searchAction.location.Last<Location>().name;
             foreach(Filter filter in rootObject.filters)
@@ -96,7 +101,7 @@ namespace RestaurantBot.Dialogs
 
             }
             
-            replyText = "Showing"+ prices + cuisine + " restaurants in" + location+ rating;
+            replyText = "Showing"+ prices.ToLower() + cuisine.ToLower() + " restaurants in" + location + rating.ToLower();
             await context.PostAsync(replyText);
 
         }
@@ -156,6 +161,7 @@ namespace RestaurantBot.Dialogs
 
         private async Task CreateFiltersDailog(IDialogContext context, RootObject rootObject, string currentBingUrl)
         {
+            if (rootObject.filters == null || rootObject.filters.Count == 0) return;
             var replyToConversation = context.MakeMessage();
             replyToConversation.AttachmentLayout = AttachmentLayoutTypes.Carousel;
             List<Filter> reversedFilter = rootObject.filters;

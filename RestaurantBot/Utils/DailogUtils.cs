@@ -15,6 +15,9 @@ namespace RestaurantBot.Utils
     {
         private static string FILTER_STRING_1 = "Narrowing restaurants to {0} {1}";
         private static string FILTER_STRING_2 = "Narrowing to {0} restaurants";
+        private static string FILTER_STRING_CUISINE = "Narrowing to {0} restaurants";
+        private static string FILTER_STRING_RATING = "Narrowing to {0} rating";
+
 
         private static string REVERSE_FILTER_STRING_1 = "^Narrowing restaurants to (.*?) (.*?)$";
         private static string REVERSE_FILTER_STRING_2 = "^Narrowing to (.*?) restaurants$";
@@ -103,6 +106,16 @@ namespace RestaurantBot.Utils
             return false;
         }
 
+        public static bool handleWelcomeMessage(string text)
+        {
+            MessageType messageType = parseQuery(text);
+            if (messageType.Equals(MessageType.Welcome))
+            {
+                return true;
+            }
+            return false;
+        }
+
         public static bool handleFilterActions(string text)
         {
             MessageType messageType = parseQuery(text);
@@ -115,25 +128,30 @@ namespace RestaurantBot.Utils
         public static MessageType parseQuery(string query)
         {
             MessageType messageType = MessageType.Default;
-            if (query.Contains("Cuisine"))
+            query = query.ToLower();
+            if (query.Contains("cuisine"))
             {
                 messageType = MessageType.Cuisines;
             }
-            else if (query.Contains("Rating"))
+            else if (query.Contains("rating"))
             {
                 messageType = MessageType.Ratings;
             }
-            else if (query.Contains("Price"))
+            else if (query.Contains("price"))
             {
                 messageType = MessageType.Prices;
             }
-            else if (query.Contains("Review"))
+            else if (query.Contains("review"))
             {
                 messageType = MessageType.Reviews;
             }
-            else if (query.Contains("Timing"))
+            else if (query.Contains("timing"))
             {
                 messageType = MessageType.Timings;
+            }
+            else if (query.Equals("hi") || query.Equals("hello") || query.Equals("hey"))
+            {
+                messageType = MessageType.Welcome;
             }
             return messageType;
         }
@@ -143,7 +161,8 @@ namespace RestaurantBot.Utils
             string restaurantName = getRemoveSubString(inputText, TIMINGS_VALUE);
             Value timingsValue = getRestaurantValue(rootObject, restaurantName);
             string outputString = "";
-            foreach(OpeningHoursSpecification openDay in timingsValue.openingHoursSpecification) {
+            if (timingsValue == null) return outputString;
+            foreach (OpeningHoursSpecification openDay in timingsValue.openingHoursSpecification) {
                 if (outputString != "") outputString += "<br />";
                 outputString += openDay.dayOfWeek + ": " + openDay.opens.hour.ToString("00") + ":" + openDay.opens.minute.ToString("00") +" - " +
                     openDay.closes.hour.ToString("00") + ":" + openDay.closes.minute.ToString("00");
@@ -247,10 +266,18 @@ namespace RestaurantBot.Utils
         {
             string cardActionText = "";
             if (MessageType.Prices.ToString().Equals(messageType)) {
-                cardActionText = string.Format(FILTER_STRING_2, value);
+                cardActionText = string.Format(FILTER_STRING_2, value.ToLower());
+            }
+            else if (MessageType.Cuisines.ToString().Equals(messageType))
+            {
+                cardActionText = string.Format(FILTER_STRING_CUISINE, value.ToLower());
+            }
+            else if (MessageType.Ratings.ToString().Equals(messageType))
+            {
+                cardActionText = string.Format(FILTER_STRING_RATING, value.ToLower());
             }
             else {
-                cardActionText = string.Format(FILTER_STRING_1, value, messageType.ToString());
+                cardActionText = string.Format(FILTER_STRING_2, value.ToLower());
             }
             return cardActionText;
         }
@@ -276,16 +303,10 @@ namespace RestaurantBot.Utils
         }
         private static string getQueryValue(string query)
         {
-            string value = "";
-            if (handleFilterActions(query))
-            {
-                value = query.Replace("Narrowing restaurants to ", "").Replace(MessageType.Cuisines.ToString(),"").Replace(MessageType.Ratings.ToString(), "");
-            }
-            else
-            {
-                //"Narrowing to {0} restaurants"
-                value = query.Replace("Narrowing to ", "").Replace(" restaurants", "");
-            }
+
+            string value = query.Replace("restaurants", "").Replace(MessageType.Cuisines.ToString(),"").Replace("rating", "").Replace(MessageType.Prices.ToString(), "").Replace("to","").Replace("Narrowing","");
+
+
             return value.TrimStart().TrimEnd();
          }
         private static string getRemoveSubString(string sourceString, string removeString)

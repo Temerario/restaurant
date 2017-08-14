@@ -19,5 +19,7 @@ namespace RestaurantBot.Constants
         public static string IMBACK = "imBack";
         public static string CURRENT_URL = "currentUrl";
 
+        public static string WELCOME_MESSAGE = "I recommend restaurants based on taste and budget. Try searching for \"restaurants in Hyderabad\", \"cheap eats in Chandni Chowk\", \"best chinese in Juhu\", etc.";
+
     }
 }
