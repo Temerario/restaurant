@@ -176,6 +176,7 @@ namespace RestaurantBot.Utils
             string restaurantName = getRemoveSubString(inputText, REVIEWS_VALUE);
             Value reviewsValue = getRestaurantValue(rootObject, restaurantName);
             List<string> reviews = new List<string>();
+            if (reviewsValue == null || reviewsValue.review == null || reviewsValue.review.Count == 0) return reviews;
             foreach(Review review in reviewsValue.review.Take(3))
             {
                 string reviewText = "";
