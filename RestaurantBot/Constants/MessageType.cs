@@ -15,6 +15,7 @@ namespace RestaurantBot.Constants
         Filter,
         Reviews,
         Timings,
+        Welcome,
         Default
     }
 }

@@ -15,7 +15,7 @@ namespace RestaurantBot.Utils
              * adding filtervalue.name -> url and scalarvalue.minLevel -> url to the bingurlhash
              **/
             Dictionary<string, string> bingUrlHash = new Dictionary<string, string>();
-            if(rootObject.filters.Count > 0)
+            if(rootObject.filters != null && rootObject.filters.Count > 0)
             {
                 foreach(Filter filter in rootObject.filters)
                 {

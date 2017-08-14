@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
+using System.Linq;
+using RestaurantBot.Constants;
 
 namespace RestaurantBot
 {
@@ -28,7 +30,7 @@ namespace RestaurantBot
             return response;
         }
 
-        private Activity HandleSystemMessage(Activity message)
+        private async Task<Activity> HandleSystemMessage(Activity message)
         {
             if (message.Type == ActivityTypes.DeleteUserData)
             {
@@ -45,6 +47,13 @@ namespace RestaurantBot
             {
                 // Handle add/remove from contact lists
                 // Activity.From + Activity.Action represent what happened
+                if (message.Action == "add")
+                {
+                    var connector1 = new ConnectorClient(new System.Uri(message.ServiceUrl));
+                    var response1 = message.CreateReply();
+                    response1.Text = AppInfo.WELCOME_MESSAGE.ToString();
+                    await connector1.Conversations.ReplyToActivityAsync(response1);
+                }
             }
             else if (message.Type == ActivityTypes.Typing)
             {

@@ -1,1 +1,2 @@
-RestaurantBot/obj/Debug
+RestaurantBot/obj/*
+RestaurantBot/bin/*

@@ -93,6 +93,7 @@ namespace RestaurantBot.Utils
             var httpValueCollection = HttpUtility.ParseQueryString(ub.Query);
 
             httpValueCollection.Add(name, value);
+            httpValueCollection.Add("mkt", "en-in");
 
             // urlencodes the whole HttpValueCollection
             ub.Query = httpValueCollection.ToString();
