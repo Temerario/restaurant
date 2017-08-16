@@ -180,11 +180,14 @@ namespace RestaurantBot.Utils
             foreach(Review review in reviewsValue.review.Take(3))
             {
                 string reviewText = "";
-                reviewText = review.provider.Last<Provider>().name + "<br />";
-                reviewText += review.reviewRating.text + "/" + review.reviewRating.bestRating.ToString() + "<br />";
-                reviewText += review.comment.text;
-             //   reviewText += getHyperLink("read more", review.url);
-                reviews.Add(reviewText);
+                if (review.reviewRating != null && review.reviewRating.text != null && review.reviewRating.bestRating != null)
+                {
+                    reviewText = review.provider.Last<Provider>().name + "<br />";
+                    reviewText += review.reviewRating.text + "/" + review.reviewRating.bestRating.ToString() + "<br />";
+                    reviewText += review.comment.text;
+                    //   reviewText += getHyperLink("read more", review.url);
+                    reviews.Add(reviewText);
+                }
             }
             return reviews;
         }
